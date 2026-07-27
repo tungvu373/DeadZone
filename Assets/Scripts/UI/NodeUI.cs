@@ -15,7 +15,7 @@ public class NodeUI : MonoBehaviour
     public TextMeshProUGUI sellText;
 
     [Header("Data")]
-    public TowerData towerData;            // để hiện giá xây
+    public TowerData towerData;
 
     private Camera cam;
 
@@ -37,15 +37,15 @@ public class NodeUI : MonoBehaviour
 
         if (empty)
         {
-            buildText.text = $"Đặt tháp ({towerData.buildCost}v)";
+            buildText.text = $"Set Tower ({towerData.buildCost}v)";
         }
         else
         {
             Tower tower = node.tower.GetComponent<Tower>();
             upgradeButton.SetActive(tower.CanUpgrade());
             if (tower.CanUpgrade())
-                upgradeText.text = $"Nâng cấp ({tower.GetUpgradeCost()}v)";
-            sellText.text = $"Bán ({tower.GetSellValue()}v)";
+                upgradeText.text = $"Update Tower ({tower.GetUpgradeCost()}v)";
+            sellText.text = $"Sell Tower ({tower.GetSellValue()}v)";
         }
     }
 

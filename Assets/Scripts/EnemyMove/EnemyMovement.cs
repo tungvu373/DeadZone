@@ -4,21 +4,27 @@ using System.Collections.Generic;
 public class EnemyMovement : MonoBehaviour
 {
     [Header("Data")]
-    public EnemyData data;                 // ✅ toàn bộ chỉ số nằm trong asset
+    public EnemyData data;
 
     public static List<EnemyMovement> ActiveEnemies = new List<EnemyMovement>();
 
-    private float health;
-    private Transform target;
-    private int waypointIndex;
-    private bool isReturned;
+    protected float health;                 // ✅ protected để Tanker dùng
+    protected Transform target;
+    protected int waypointIndex;
+    protected bool isReturned;
 
-    void OnEnable()
+    protected virtual void OnEnable()       // ✅ virtual
     {
         if (Waypoints.points == null || Waypoints.points.Length == 0)
             return;
 
-        health = data.maxHealth;           // ✅ từ data
+        if (data == null)
+        {
+            Debug.LogError($"[EnemyMovement] Chưa gán EnemyData vào '{gameObject.name}'!", gameObject);
+            return;
+        }
+
+        health = data.maxHealth;
         waypointIndex = 0;
         isReturned = false;
         target = Waypoints.points[0];
@@ -27,17 +33,22 @@ public class EnemyMovement : MonoBehaviour
         ActiveEnemies.Add(this);
     }
 
-    void OnDisable()
+    protected virtual void OnDisable()
     {
         ActiveEnemies.Remove(this);
     }
 
-    void Update()
+    protected virtual void Update()         // ✅ virtual
+    {
+        MoveAlongPath();
+    }
+
+    protected void MoveAlongPath()          // ✅ tách riêng để class con gọi lại
     {
         if (target == null) return;
 
         Vector3 dir = target.position - transform.position;
-        transform.Translate(dir.normalized * data.speed * Time.deltaTime, Space.World);  // ✅ từ data
+        transform.Translate(dir.normalized * data.speed * Time.deltaTime, Space.World);
 
         if (dir != Vector3.zero)
         {
@@ -64,24 +75,24 @@ public class EnemyMovement : MonoBehaviour
 
     void ReachEnd()
     {
-        GameManager.Instance.TakeDamage(data.damageToBase);   // ✅ trừ máu base
+        GameManager.Instance.TakeDamage(data.damageToBase);
         ReturnSelf();
     }
 
-    public void TakeDamage(float amount)
+    public virtual void TakeDamage(float amount)   // ✅ virtual — Tanker sẽ override để chặn damage
     {
         health -= amount;
         if (health <= 0)
         {
-            GameManager.Instance.AddMoney(data.moneyReward);  // ✅ cộng tiền
+            GameManager.Instance.AddMoney(data.moneyReward);
             ReturnSelf();
         }
     }
 
-    void ReturnSelf()
+    protected void ReturnSelf()
     {
         if (isReturned) return;
         isReturned = true;
-        ObjectPool.Instance.ReturnToPool("Enemy", gameObject);
+        ObjectPool.Instance.ReturnToPool(data.poolTag, gameObject);   // ✅ dùng poolTag từ data
     }
 }

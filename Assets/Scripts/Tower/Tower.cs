@@ -1,10 +1,14 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 public class Tower : MonoBehaviour
 {
-    [Header("Data")]
-    public TowerData data;                 // ✅ toàn bộ chỉ số nằm trong asset
+    public static List<Tower> ActiveTowers = new List<Tower>();
 
+    void OnEnable() { ActiveTowers.Add(this); }
+    void OnDisable() { ActiveTowers.Remove(this); }
+    private float health;
+    [Header("Data")]
+    public TowerData data;
     [Header("Setup")]
     public Transform rotatePart;
     public Transform firePoint;
@@ -19,7 +23,6 @@ public class Tower : MonoBehaviour
     private float fireCountdown;
     private float searchCountdown;
     private const float searchInterval = 0.3f;
-
     void Start()
     {
         Level = 1;
@@ -33,6 +36,7 @@ public class Tower : MonoBehaviour
         damage = stats.damage;
         range = stats.range;
         fireRate = stats.fireRate;
+        health = stats.maxHealth;
     }
 
     void Update()
@@ -49,8 +53,6 @@ public class Tower : MonoBehaviour
 
         fireCountdown -= Time.deltaTime;
         if (target == null) return;
-
-        RotateToTarget();
 
         if (fireCountdown <= 0f)
         {
@@ -82,18 +84,10 @@ public class Tower : MonoBehaviour
         target = nearest;
     }
 
-    void RotateToTarget()
-    {
-        if (rotatePart == null) return;
-        Vector3 dir = target.transform.position - rotatePart.position;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        rotatePart.rotation = Quaternion.Euler(0, 0, angle);
-    }
-
     void Shoot()
     {
-        GameObject bulletObj = ObjectPool.Instance.SpawnFromPool(
-            "Bullet", firePoint.position, firePoint.rotation);
+        GameObject bulletObj = ObjectPool.Instance.SpawnFromPool
+            ("Bullet", firePoint.position, firePoint.rotation);
 
         if (bulletObj != null)
             bulletObj.GetComponent<Bullet>().Seek(target, damage);
@@ -126,5 +120,15 @@ public class Tower : MonoBehaviour
             ? data.levels[Mathf.Clamp(Level, 1, data.MaxLevel) - 1].range : 3f;
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, r);
+    }
+    public void TakeDamage(float amount)
+    {
+        health -= amount;
+        if (health <= 0) Die();
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
     }
 }

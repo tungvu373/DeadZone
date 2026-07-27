@@ -5,6 +5,7 @@ public class TowerLevelStats
 {
     public float damage = 25f;
     public float range = 3f;
+    public float maxHealth = 100f;
     public float fireRate = 1f;
     public int upgradeCost = 50;     // giá để NÂNG LÊN level này (level 1 không dùng)
 }
