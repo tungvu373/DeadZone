@@ -3,24 +3,28 @@ using System.Collections.Generic;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [Header("Stats")]
-    public float speed = 3f;
-    public float maxHealth = 100f;
+    [Header("Data")]
+    public EnemyData data;
 
-    // Danh sách quái đang sống
     public static List<EnemyMovement> ActiveEnemies = new List<EnemyMovement>();
 
-    private float health;
-    private Transform target;
-    private int waypointIndex;
-    private bool isReturned;
-    void OnEnable()
+    protected float health;                 // ✅ protected để Tanker dùng
+    protected Transform target;
+    protected int waypointIndex;
+    protected bool isReturned;
+
+    protected virtual void OnEnable()       // ✅ virtual
     {
-        // Pool đang khởi tạo lúc game start, Waypoints chưa sẵn sàng → bỏ qua
         if (Waypoints.points == null || Waypoints.points.Length == 0)
             return;
 
-        health = maxHealth;
+        if (data == null)
+        {
+            Debug.LogError($"[EnemyMovement] Chưa gán EnemyData vào '{gameObject.name}'!", gameObject);
+            return;
+        }
+
+        health = data.maxHealth;
         waypointIndex = 0;
         isReturned = false;
         target = Waypoints.points[0];
@@ -29,26 +33,29 @@ public class EnemyMovement : MonoBehaviour
         ActiveEnemies.Add(this);
     }
 
-    void OnDisable()
+    protected virtual void OnDisable()
     {
-        ActiveEnemies.Remove(this); // Remove trên phần tử không tồn tại → an toàn, không lỗi
+        ActiveEnemies.Remove(this);
     }
 
-    void Update()
+    protected virtual void Update()         // ✅ virtual
+    {
+        MoveAlongPath();
+    }
+
+    protected void MoveAlongPath()          // ✅ tách riêng để class con gọi lại
     {
         if (target == null) return;
-        // Di chuyển về waypoint hiện tại
-        Vector3 dir = target.position - transform.position;
-        transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
 
-        // Xoay sprite theo hướng đi (cần cho đường ngoằn ngoèo)
+        Vector3 dir = target.position - transform.position;
+        transform.Translate(dir.normalized * data.speed * Time.deltaTime, Space.World);
+
         if (dir != Vector3.zero)
         {
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle);
         }
 
-        // Đến waypoint → chuyển sang điểm kế tiếp
         if (Vector3.Distance(transform.position, target.position) <= 0.2f)
         {
             GetNextWaypoint();
@@ -68,22 +75,24 @@ public class EnemyMovement : MonoBehaviour
 
     void ReachEnd()
     {
+        GameManager.Instance.TakeDamage(data.damageToBase);
         ReturnSelf();
     }
 
-    public void TakeDamage(float amount)
+    public virtual void TakeDamage(float amount)   // ✅ virtual — Tanker sẽ override để chặn damage
     {
         health -= amount;
         if (health <= 0)
         {
+            GameManager.Instance.AddMoney(data.moneyReward);
             ReturnSelf();
         }
     }
 
-    void ReturnSelf()
+    protected void ReturnSelf()
     {
-        if (isReturned) return;   // chống return về pool 2 lần trong cùng frame
+        if (isReturned) return;
         isReturned = true;
-        ObjectPool.Instance.ReturnToPool("Enemy", gameObject);
+        ObjectPool.Instance.ReturnToPool(data.poolTag, gameObject);   // ✅ dùng poolTag từ data
     }
 }
