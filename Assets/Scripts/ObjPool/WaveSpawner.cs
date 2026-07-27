@@ -7,7 +7,7 @@ public class WaveSpawner : MonoBehaviour
     public Transform spawnPoint;
 
     [Header("Wave Settings")]
-    public float timeBetweenWaves = 5f;   // nghỉ giữa các wave
+    public float timeBetweenWaves = 7f;   // nghỉ giữa các wave
     public float spawnRate = 0.5f;        // giãn cách giữa từng con
 
     private int waveIndex = 0;
@@ -26,14 +26,28 @@ public class WaveSpawner : MonoBehaviour
     IEnumerator SpawnWave()
     {
         waveIndex++;
-        int enemyCount = waveIndex * 2 + 3;  // wave sau đông hơn wave trước
 
-        Debug.Log("Wave " + waveIndex + " - " + enemyCount + " enemies!");
+        int enemyCount = waveIndex * 2 + 3;
+
+        Debug.Log("Wave " + waveIndex);
 
         for (int i = 0; i < enemyCount; i++)
         {
+            // Spawn Enemy
             ObjectPool.Instance.SpawnFromPool("Enemy", spawnPoint.position, Quaternion.identity);
             yield return new WaitForSeconds(spawnRate);
+
+            // Cứ sau 5 Enemy thì spawn 2 Tanker
+            if ((i + 1) % 5 == 0)
+            {
+                yield return new WaitForSeconds(1f); // nghỉ 1 giây
+
+                for (int j = 0; j < 2; j++)
+                {
+                    ObjectPool.Instance.SpawnFromPool("Tanker", spawnPoint.position, Quaternion.identity);
+                    yield return new WaitForSeconds(spawnRate);
+                }
+            }
         }
     }
 }
