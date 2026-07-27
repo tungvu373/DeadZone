@@ -7,14 +7,26 @@ public class WaveSpawner : MonoBehaviour
     public Transform spawnPoint;
 
     [Header("Wave Settings")]
-    public float timeBetweenWaves = 5f;   // nghỉ giữa các wave
-    public float spawnRate = 0.5f;        // giãn cách giữa từng con
+    public int totalWaves = 5;             // ✅ số wave để thắng
+    public float timeBetweenWaves = 5f;
+    public float spawnRate = 0.5f;
 
     private int waveIndex = 0;
-    private float countdown = 3f;         // đếm ngược wave đầu tiên
+    private float countdown = 3f;
+    private bool allWavesSpawned = false;
 
     void Update()
     {
+        if (GameManager.Instance.IsGameOver) return;
+
+        // ✅ Hết wave + hết quái trên map → THẮNG
+        if (allWavesSpawned)
+        {
+            if (EnemyMovement.ActiveEnemies.Count == 0)
+                GameManager.Instance.Win();
+            return;
+        }
+
         if (countdown <= 0f)
         {
             StartCoroutine(SpawnWave());
@@ -26,14 +38,17 @@ public class WaveSpawner : MonoBehaviour
     IEnumerator SpawnWave()
     {
         waveIndex++;
-        int enemyCount = waveIndex * 2 + 3;  // wave sau đông hơn wave trước
+        GameManager.Instance.SetWaveText($"Wave: {waveIndex}/{totalWaves}");
 
-        Debug.Log("Wave " + waveIndex + " - " + enemyCount + " enemies!");
+        int enemyCount = waveIndex * 2 + 3;
 
         for (int i = 0; i < enemyCount; i++)
         {
             ObjectPool.Instance.SpawnFromPool("Enemy", spawnPoint.position, Quaternion.identity);
             yield return new WaitForSeconds(spawnRate);
         }
+
+        if (waveIndex >= totalWaves)
+            allWavesSpawned = true;
     }
 }
