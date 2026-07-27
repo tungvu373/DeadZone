@@ -112,7 +112,15 @@ public class BuildManager : MonoBehaviour
     {
         if (selectedNode == null || !selectedNode.IsEmpty()) return;
 
-        // Phase 5: kiểm tra đủ tiền mới cho xây
+        TowerData data = towerPrefab.GetComponent<Tower>().data;
+
+        // ✅ Check tiền
+        if (!GameManager.Instance.SpendMoney(data.buildCost))
+        {
+            Debug.Log("Không đủ vàng!");
+            return;
+        }
+
         GameObject tower = Instantiate(towerPrefab,
             selectedNode.GetBuildPosition(), Quaternion.identity);
         selectedNode.tower = tower;
@@ -124,9 +132,17 @@ public class BuildManager : MonoBehaviour
     {
         if (selectedNode == null || selectedNode.IsEmpty()) return;
 
-        // Phase 5: trừ tiền nâng cấp
-        selectedNode.tower.GetComponent<Tower>().Upgrade();
+        Tower tower = selectedNode.tower.GetComponent<Tower>();
+        if (!tower.CanUpgrade()) return;
 
+        // ✅ Check tiền
+        if (!GameManager.Instance.SpendMoney(tower.GetUpgradeCost()))
+        {
+            Debug.Log("Không đủ vàng để nâng cấp!");
+            return;
+        }
+
+        tower.Upgrade();
         DeselectNode();
     }
 
@@ -134,7 +150,9 @@ public class BuildManager : MonoBehaviour
     {
         if (selectedNode == null || selectedNode.IsEmpty()) return;
 
-        // Phase 5: hoàn lại tiền
+        Tower tower = selectedNode.tower.GetComponent<Tower>();
+        GameManager.Instance.AddMoney(tower.GetSellValue());   // ✅ hoàn tiền
+
         Destroy(selectedNode.tower);
         selectedNode.tower = null;
 

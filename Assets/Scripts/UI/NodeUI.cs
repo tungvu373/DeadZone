@@ -1,12 +1,21 @@
 using UnityEngine;
+using TMPro;
 
 public class NodeUI : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject panel;          // panel chứa các nút
+    public GameObject panel;
     public GameObject buildButton;
     public GameObject upgradeButton;
     public GameObject sellButton;
+
+    [Header("Texts (TextMeshPro)")]
+    public TextMeshProUGUI buildText;
+    public TextMeshProUGUI upgradeText;
+    public TextMeshProUGUI sellText;
+
+    [Header("Data")]
+    public TowerData towerData;            // để hiện giá xây
 
     private Camera cam;
 
@@ -19,31 +28,27 @@ public class NodeUI : MonoBehaviour
     public void Show(Node node)
     {
         panel.SetActive(true);
-
-        // Đặt menu ngay tại vị trí node trên màn hình
         panel.transform.position = cam.WorldToScreenPoint(node.GetBuildPosition());
 
-        // Hiện nút theo trạng thái ô
         bool empty = node.IsEmpty();
         buildButton.SetActive(empty);
         upgradeButton.SetActive(!empty);
         sellButton.SetActive(!empty);
 
-        // Nếu tower max level thì ẩn nút nâng cấp
-        if (!empty)
+        if (empty)
+        {
+            buildText.text = $"Đặt tháp ({towerData.buildCost}v)";
+        }
+        else
         {
             Tower tower = node.tower.GetComponent<Tower>();
             upgradeButton.SetActive(tower.CanUpgrade());
+            if (tower.CanUpgrade())
+                upgradeText.text = $"Nâng cấp ({tower.GetUpgradeCost()}v)";
+            sellText.text = $"Bán ({tower.GetSellValue()}v)";
         }
     }
 
-    public void Hide()
-    {
-        panel.SetActive(false);
-    }
-
-    public bool IsOpen()
-    {
-        return panel.activeSelf;
-    }
+    public void Hide() => panel.SetActive(false);
+    public bool IsOpen() => panel.activeSelf;
 }

@@ -3,24 +3,22 @@ using System.Collections.Generic;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [Header("Stats")]
-    public float speed = 3f;
-    public float maxHealth = 100f;
+    [Header("Data")]
+    public EnemyData data;                 // ✅ toàn bộ chỉ số nằm trong asset
 
-    // Danh sách quái đang sống
     public static List<EnemyMovement> ActiveEnemies = new List<EnemyMovement>();
 
     private float health;
     private Transform target;
     private int waypointIndex;
     private bool isReturned;
+
     void OnEnable()
     {
-        // Pool đang khởi tạo lúc game start, Waypoints chưa sẵn sàng → bỏ qua
         if (Waypoints.points == null || Waypoints.points.Length == 0)
             return;
 
-        health = maxHealth;
+        health = data.maxHealth;           // ✅ từ data
         waypointIndex = 0;
         isReturned = false;
         target = Waypoints.points[0];
@@ -31,24 +29,22 @@ public class EnemyMovement : MonoBehaviour
 
     void OnDisable()
     {
-        ActiveEnemies.Remove(this); // Remove trên phần tử không tồn tại → an toàn, không lỗi
+        ActiveEnemies.Remove(this);
     }
 
     void Update()
     {
         if (target == null) return;
-        // Di chuyển về waypoint hiện tại
-        Vector3 dir = target.position - transform.position;
-        transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
 
-        // Xoay sprite theo hướng đi (cần cho đường ngoằn ngoèo)
+        Vector3 dir = target.position - transform.position;
+        transform.Translate(dir.normalized * data.speed * Time.deltaTime, Space.World);  // ✅ từ data
+
         if (dir != Vector3.zero)
         {
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle);
         }
 
-        // Đến waypoint → chuyển sang điểm kế tiếp
         if (Vector3.Distance(transform.position, target.position) <= 0.2f)
         {
             GetNextWaypoint();
@@ -68,6 +64,7 @@ public class EnemyMovement : MonoBehaviour
 
     void ReachEnd()
     {
+        GameManager.Instance.TakeDamage(data.damageToBase);   // ✅ trừ máu base
         ReturnSelf();
     }
 
@@ -76,13 +73,14 @@ public class EnemyMovement : MonoBehaviour
         health -= amount;
         if (health <= 0)
         {
+            GameManager.Instance.AddMoney(data.moneyReward);  // ✅ cộng tiền
             ReturnSelf();
         }
     }
 
     void ReturnSelf()
     {
-        if (isReturned) return;   // chống return về pool 2 lần trong cùng frame
+        if (isReturned) return;
         isReturned = true;
         ObjectPool.Instance.ReturnToPool("Enemy", gameObject);
     }
