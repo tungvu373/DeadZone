@@ -7,7 +7,6 @@ TagManager:
   - Enemy
   - Bullet
   - Tanker
-  - FireBullet
   layers:
   - Default
   - TransparentFX
