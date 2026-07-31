@@ -1,0 +1,10 @@
+{
+    "users": [
+        {
+            "username": "quan234",
+            "password": "12345",
+            "coin": 0,
+            "level": 1
+        }
+    ]
+}
