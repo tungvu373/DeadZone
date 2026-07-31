@@ -12,7 +12,12 @@ public class Tower : MonoBehaviour
     [Header("Setup")]
     public Transform rotatePart;
     public Transform firePoint;
-
+    [Header("UI")]
+    public HealthBar healthBar;
+    [Header("Range Indicator")]
+    public GameObject rangeIndicator;
+    [Header("Visual")]
+    public SpriteRenderer bodyRenderer;      // ✅ SpriteRenderer của thân tower (Base)
     public int Level { get; private set; } = 1;
     public int TotalInvested { get; private set; }   // tổng tiền đã bỏ vào (để tính hoàn khi bán)
 
@@ -37,6 +42,11 @@ public class Tower : MonoBehaviour
         range = stats.range;
         fireRate = stats.fireRate;
         health = stats.maxHealth;
+        if (healthBar != null)
+            healthBar.SetHealth(health, stats.maxHealth);
+        // ✅ Đổi sprite theo level
+        if (bodyRenderer != null && stats.levelSprite != null)
+            bodyRenderer.sprite = stats.levelSprite;
     }
 
     void Update()
@@ -106,7 +116,8 @@ public class Tower : MonoBehaviour
         TotalInvested += GetUpgradeCost();
         Level++;
         ApplyStats();
-        transform.localScale *= 1.1f;   // placeholder, Phase 6 đổi sprite theo level
+        if (rangeIndicator != null && rangeIndicator.activeSelf)
+            ShowRange(true);
     }
 
     public int GetSellValue()
@@ -124,9 +135,21 @@ public class Tower : MonoBehaviour
     public void TakeDamage(float amount)
     {
         health -= amount;
+        if (healthBar != null)
+            healthBar.SetHealth(health, data.levels[Level - 1].maxHealth);
         if (health <= 0) Die();
     }
+    public void ShowRange(bool show)
+    {
+        if (rangeIndicator == null) return;
 
+        if (show)
+        {
+            // Sprite tròn mặc định đường kính 1 unit → scale = range * 2
+            rangeIndicator.transform.localScale = Vector3.one * range * 2f;
+        }
+        rangeIndicator.SetActive(show);
+    }
     void Die()
     {
         Destroy(gameObject);

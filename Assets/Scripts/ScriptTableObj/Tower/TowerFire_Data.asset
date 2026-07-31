@@ -16,18 +16,21 @@ MonoBehaviour:
   buildCost: 100
   sellRefundPercent: 0.7
   levels:
-  - damage: 20
+  - damage: 50
     range: 3.5
     maxHealth: 100
     fireRate: 1
     upgradeCost: 0
+    levelSprite: {fileID: -5901685104126582622, guid: 7da84d7bb4e197a49981731b9119c918, type: 3}
   - damage: 70
     range: 4
     maxHealth: 100
     fireRate: 2
     upgradeCost: 100
+    levelSprite: {fileID: 1330466856, guid: 7da84d7bb4e197a49981731b9119c918, type: 3}
   - damage: 100
     range: 5
     maxHealth: 100
     fireRate: 4
     upgradeCost: 200
+    levelSprite: {fileID: 950745945, guid: 7da84d7bb4e197a49981731b9119c918, type: 3}
