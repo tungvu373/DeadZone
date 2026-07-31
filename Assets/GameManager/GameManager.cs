@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,6 +35,19 @@ public class GameManager : MonoBehaviour
         UpdateUI();
         if (winPanel != null) winPanel.SetActive(false);
         if (losePanel != null) losePanel.SetActive(false);
+        StartCoroutine(PassiveCoinRoutine());
+    }
+
+    // ================== PASSIVE INCOME ==================
+
+    IEnumerator PassiveCoinRoutine()
+    {
+        while (!IsGameOver)
+        {
+            yield return new WaitForSeconds(1.25f);
+            if (!IsGameOver)
+                AddMoney(1);
+        }
     }
 
     // ================== TIỀN ==================

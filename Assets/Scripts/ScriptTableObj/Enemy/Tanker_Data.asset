@@ -20,5 +20,5 @@ MonoBehaviour:
   damageToBase: 1
   attackDamage: 5
   attackRate: 1
-  attackRange: 4
+  attackRange: 3.5
   shieldBlockPercent: 0.5

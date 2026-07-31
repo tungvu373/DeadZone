@@ -73,12 +73,6 @@ public class TankerMovement : EnemyMovement
     {
         // Quay mặt về tower
         Vector3 dir = towerTarget.transform.position - transform.position;
-        if (dir != Vector3.zero)
-        {
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-        }
-
         attackCountdown -= Time.deltaTime;
         if (attackCountdown <= 0f)
         {
