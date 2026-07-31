@@ -8,6 +8,7 @@ public class TowerLevelStats
     public float maxHealth = 100f;
     public float fireRate = 1f;
     public int upgradeCost = 50;     // giá để NÂNG LÊN level này (level 1 không dùng)
+    public Sprite levelSprite;
 }
 
 [CreateAssetMenu(fileName = "TowerData", menuName = "TD/Tower Data")]

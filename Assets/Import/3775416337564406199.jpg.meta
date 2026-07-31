@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f3c1ad2979cf6c84da299a794c44ac69
+guid: ca9fc1a9826932648a2e1b91a216484d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2579299117502204163
-    second: Tower 02_0
+      213: -1652498915958657301
+    second: 3775416337564406199_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,10 +48,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,67 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower 02_0
+      name: 3775416337564406199_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 63
-        height: 110
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 301
+        height: 51
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3098234b1e28bc320800000000000000
-      internalID: 2579299117502204163
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower 02_1
-      rect:
-        serializedVersion: 2
-        x: 63
-        y: 1
-        width: 65
-        height: 119
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 10e12c794b05d1e458ae88ebafc115a5
-      internalID: -925897574
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower 02_2
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 1
-        width: 64
-        height: 130
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d62d222ba220c0e4695080148a0c3981
-      internalID: 456778421
+      spriteID: beee092cdf42119e0800000000000000
+      internalID: -1652498915958657301
       vertices: []
       indices: 
       edges: []
@@ -182,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cc14c3dd6f48f6c448f511b235d10c19
+    spriteID: dee40f45b49912c459e83db82301aa7c
     internalID: 0
     vertices: []
     indices: 
@@ -192,9 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tower 02_0: 2579299117502204163
-      Tower 02_1: -925897574
-      Tower 02_2: 456778421
+      3775416337564406199_0: -1652498915958657301
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

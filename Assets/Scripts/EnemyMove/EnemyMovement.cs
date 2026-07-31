@@ -12,6 +12,8 @@ public class EnemyMovement : MonoBehaviour
     protected Transform target;
     protected int waypointIndex;
     protected bool isReturned;
+    [Header("UI")]
+    public HealthBar healthBar;
 
     protected virtual void OnEnable()       // ✅ virtual
     {
@@ -23,6 +25,8 @@ public class EnemyMovement : MonoBehaviour
             Debug.LogError($"[EnemyMovement] Chưa gán EnemyData vào '{gameObject.name}'!", gameObject);
             return;
         }
+        if (healthBar != null)
+            healthBar.SetHealth(health, data.maxHealth);
 
         health = data.maxHealth;
         waypointIndex = 0;
@@ -31,6 +35,8 @@ public class EnemyMovement : MonoBehaviour
         transform.position = Waypoints.points[0].position;
 
         ActiveEnemies.Add(this);
+        if (healthBar != null)
+            healthBar.SetHealth(health, data.maxHealth);
     }
 
     protected virtual void OnDisable()
@@ -43,18 +49,12 @@ public class EnemyMovement : MonoBehaviour
         MoveAlongPath();
     }
 
-    protected void MoveAlongPath()          // ✅ tách riêng để class con gọi lại
+    protected void MoveAlongPath()
     {
         if (target == null) return;
 
         Vector3 dir = target.position - transform.position;
         transform.Translate(dir.normalized * data.speed * Time.deltaTime, Space.World);
-
-        if (dir != Vector3.zero)
-        {
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-        }
 
         if (Vector3.Distance(transform.position, target.position) <= 0.2f)
         {
@@ -82,6 +82,9 @@ public class EnemyMovement : MonoBehaviour
     public virtual void TakeDamage(float amount)   // ✅ virtual — Tanker sẽ override để chặn damage
     {
         health -= amount;
+        if (healthBar != null)
+            healthBar.SetHealth(health, data.maxHealth);
+
         if (health <= 0)
         {
             GameManager.Instance.AddMoney(data.moneyReward);

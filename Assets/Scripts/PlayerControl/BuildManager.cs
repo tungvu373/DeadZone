@@ -96,12 +96,20 @@ public class BuildManager : MonoBehaviour
         selectedNode = node;
         selectedNode.Highlight();     // giữ highlight khi menu đang mở
         nodeUI.Show(selectedNode);
+        // ✅ Hiện tầm bắn nếu ô có tower
+        if (!selectedNode.IsEmpty())
+            selectedNode.tower.GetComponent<Tower>().ShowRange(true);
     }
 
     void DeselectNode()
     {
         if (selectedNode != null)
+        {
             selectedNode.ResetColor();
+            // ✅ Tắt tầm bắn (check null vì tower có thể vừa bị bán/phá)
+            if (selectedNode.tower != null)
+                selectedNode.tower.GetComponent<Tower>().ShowRange(false);
+        }
         selectedNode = null;
         nodeUI.Hide();
     }
