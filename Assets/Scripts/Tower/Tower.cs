@@ -17,9 +17,9 @@ public class Tower : MonoBehaviour
     public int TotalInvested { get; private set; }   // tổng tiền đã bỏ vào (để tính hoàn khi bán)
 
     // Chỉ số hiện tại (lấy từ data theo level)
-    protected float damage, range, fireRate;
+    private float damage, range, fireRate;
 
-    protected EnemyMovement target;
+    private EnemyMovement target;
     private float fireCountdown;
     private float searchCountdown;
     private const float searchInterval = 0.3f;
@@ -67,7 +67,7 @@ public class Tower : MonoBehaviour
                Vector2.Distance(transform.position, enemy.transform.position) <= range;
     }
 
-    protected virtual void FindTarget()
+    void FindTarget()
     {
         float shortestDist = Mathf.Infinity;
         EnemyMovement nearest = null;
@@ -84,7 +84,7 @@ public class Tower : MonoBehaviour
         target = nearest;
     }
 
-    protected virtual void Shoot()
+    void Shoot()
     {
         GameObject bulletObj = ObjectPool.Instance.SpawnFromPool
             ("Bullet", firePoint.position, firePoint.rotation);
