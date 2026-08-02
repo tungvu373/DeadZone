@@ -128,7 +128,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.62, y: 1.82}
+  m_Size: {x: 2.36, y: 2.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -170,6 +170,9 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 3c7afc6f7dd72984691517171401491f, type: 2}
   healthBar: {fileID: 2738324802166220448}
   shieldVisual: {fileID: 6685800657162037005}
+  animator: {fileID: 7637834595821201394}
+  shieldDuration: 2
+  shieldCooldown: 5
 --- !u!58 &3232981425272222538
 CircleCollider2D:
   m_ObjectHideFlags: 0

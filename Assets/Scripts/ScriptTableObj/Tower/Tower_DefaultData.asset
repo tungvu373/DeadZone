@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5d2272a8f8b6a74c9da08551c05e429, type: 3}
-  m_Name: TowerFire_Data
+  m_Name: Tower_DefaultData
   m_EditorClassIdentifier: Assembly-CSharp::TowerData
-  towerName: Archer Tower
+  towerName: Tower Default
   buildCost: 100
   sellRefundPercent: 0.7
   levels:

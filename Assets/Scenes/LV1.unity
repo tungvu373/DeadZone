@@ -12034,7 +12034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35076eeb9b6807b4bb1f3a4c9c3ee732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildManager
-  towerPrefab: {fileID: 4332281721538828051, guid: b99cae2e199f3f343a215112059f57e2, type: 3}
+  towerPrefab: {fileID: 1607878326220238542, guid: 6325aaed7a7a0ec4bb23412bbf452b42, type: 3}
   nodeLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -12777,7 +12777,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[1].tag
@@ -12786,6 +12786,10 @@ PrefabInstance:
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[2].tag
       value: Tanker
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[3].tag
+      value: FireBullet
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[0].size
@@ -12800,6 +12804,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[3].size
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[0].prefab
       value: 
       objectReference: {fileID: 334209698094377213, guid: 7dff2d887a14fd345b1dd9c4185b4117, type: 3}
@@ -12811,6 +12819,10 @@ PrefabInstance:
       propertyPath: pools.Array.data[2].prefab
       value: 
       objectReference: {fileID: 4213658722696283993, guid: 6bb53cc8fcb11f74da5423b4b77aea1c, type: 3}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[3].prefab
+      value: 
+      objectReference: {fileID: 8403946355032327462, guid: 8e99672cf1e52af498731ad5be7a989a, type: 3}
     - target: {fileID: 4858090923644882781, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.13719
