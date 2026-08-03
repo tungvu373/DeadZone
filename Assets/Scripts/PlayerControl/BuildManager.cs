@@ -1,89 +1,144 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class BuildManager : MonoBehaviour
 {
     public static BuildManager Instance;
 
+    [Header("Tower Prefabs")]
+    public GameObject normalTowerPrefab;
+    public GameObject fireTowerPrefab;
+
+    [Tooltip("Có thể để trống và thêm sau.")]
+    public GameObject iceTowerPrefab;
+
+    [Tooltip("Có thể để trống và thêm sau.")]
+    public GameObject lightningTowerPrefab;
+
     [Header("Setup")]
-    public GameObject towerPrefab;
     public LayerMask nodeLayerMask;
     public NodeUI nodeUI;
 
     private Camera cam;
-    private Node hoveredNode;     // node đang trỏ chuột (highlight)
-    private Node selectedNode;    // node đang mở menu
+    private Node hoveredNode;
+    private Node selectedNode;
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
-        cam = Camera.main;   // vẫn dùng Main Camera — Cinemachine chỉ điều khiển, không thay thế nó
+        cam = Camera.main;
     }
 
-    void Update()
+    private void Update()
     {
-        bool overUI = EventSystem.current != null &&
-                      EventSystem.current.IsPointerOverGameObject();
+        if (cam == null)
+            return;
 
-        Vector3 mouseWorld = cam.ScreenToWorldPoint(Input.mousePosition);
+        // Chỉ chặn thao tác thế giới khi chuột nằm trên UI tương tác.
+        bool overUI = IsPointerOverInteractiveUI();
+
+        Vector3 mouseWorld =
+            cam.ScreenToWorldPoint(Input.mousePosition);
+
         mouseWorld.z = 0f;
 
-        // ----- Highlight khi hover (không hover khi đang trên UI hoặc đang kéo map) -----
-        if (!overUI && !CameraDragController.IsDragging)   // ✅ ĐÃ SỬA
+        if (!overUI && !CameraDragController.IsDragging)
+        {
             HandleHover(mouseWorld);
+        }
         else
+        {
             ClearHover();
+        }
 
-        // ----- CHUỘT PHẢI: mở menu -----
+        // Chuột phải: chọn node.
         if (Input.GetMouseButtonDown(1) && !overUI)
         {
             Node node = GetNodeUnderMouse(mouseWorld);
+
             if (node != null)
                 SelectNode(node);
             else
                 DeselectNode();
         }
 
-        // ----- CHUỘT TRÁI thả ra ở chỗ trống: đóng menu -----
-        // (click lên nút UI thì EventSystem xử lý, không vào đây;
-        //  kéo map thì IsDragging = true, cũng không đóng menu)
-        if (Input.GetMouseButtonUp(0) && !overUI && !CameraDragController.IsDragging)   // ✅ ĐÃ SỬA
+        // Chuột trái vào chỗ trống: đóng menu.
+        if (Input.GetMouseButtonUp(0) &&
+            !overUI &&
+            !CameraDragController.IsDragging)
         {
             DeselectNode();
         }
     }
 
-    Node GetNodeUnderMouse(Vector3 mouseWorld)
+    private bool IsPointerOverInteractiveUI()
     {
-        Collider2D hit = Physics2D.OverlapPoint(mouseWorld, nodeLayerMask);
+        if (EventSystem.current == null)
+            return false;
+
+        PointerEventData pointerData =
+            new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            Selectable selectable =
+                result.gameObject.GetComponentInParent<Selectable>();
+
+            if (selectable != null &&
+                selectable.gameObject.activeInHierarchy &&
+                selectable.interactable)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Node GetNodeUnderMouse(Vector3 mouseWorld)
+    {
+        Collider2D hit = Physics2D.OverlapPoint(
+            mouseWorld,
+            nodeLayerMask
+        );
+
         return hit != null ? hit.GetComponent<Node>() : null;
     }
 
-    void HandleHover(Vector3 mouseWorld)
+    private void HandleHover(Vector3 mouseWorld)
     {
         Node node = GetNodeUnderMouse(mouseWorld);
-        if (node != hoveredNode)
-        {
-            if (hoveredNode != null && hoveredNode != selectedNode)
-                hoveredNode.ResetColor();
 
-            hoveredNode = node;
+        if (node == hoveredNode)
+            return;
 
-            if (hoveredNode != null)
-                hoveredNode.Highlight();
-        }
+        if (hoveredNode != null && hoveredNode != selectedNode)
+            hoveredNode.ResetColor();
+
+        hoveredNode = node;
+
+        if (hoveredNode != null)
+            hoveredNode.Highlight();
     }
 
-    void ClearHover()
+    private void ClearHover()
     {
         if (hoveredNode != null && hoveredNode != selectedNode)
             hoveredNode.ResetColor();
+
         hoveredNode = null;
     }
 
-    void SelectNode(Node node)
+    private void SelectNode(Node node)
     {
-        // Bấm phải lần nữa vào node đang chọn → đóng menu (toggle)
         if (selectedNode == node)
         {
             DeselectNode();
@@ -91,60 +146,115 @@ public class BuildManager : MonoBehaviour
         }
 
         if (selectedNode != null)
+        {
             selectedNode.ResetColor();
+            ShowTowerRange(selectedNode, false);
+        }
 
         selectedNode = node;
-        selectedNode.Highlight();     // giữ highlight khi menu đang mở
-        nodeUI.Show(selectedNode);
-        // ✅ Hiện tầm bắn nếu ô có tower
-        if (!selectedNode.IsEmpty())
-            selectedNode.tower.GetComponent<Tower>().ShowRange(true);
+        selectedNode.Highlight();
+
+        if (nodeUI != null)
+            nodeUI.Show(selectedNode);
+
+        ShowTowerRange(selectedNode, true);
     }
 
-    void DeselectNode()
+    private void DeselectNode()
     {
         if (selectedNode != null)
         {
             selectedNode.ResetColor();
-            // ✅ Tắt tầm bắn (check null vì tower có thể vừa bị bán/phá)
-            if (selectedNode.tower != null)
-                selectedNode.tower.GetComponent<Tower>().ShowRange(false);
+            ShowTowerRange(selectedNode, false);
         }
+
         selectedNode = null;
-        nodeUI.Hide();
+
+        if (nodeUI != null)
+            nodeUI.Hide();
     }
 
-    // ================== CÁC HÀM GỌI TỪ NÚT UI ==================
-
-    public void BuildTower()
+    private void ShowTowerRange(Node node, bool show)
     {
-        if (selectedNode == null || !selectedNode.IsEmpty()) return;
+        if (node == null || node.tower == null)
+            return;
 
-        TowerData data = towerPrefab.GetComponent<Tower>().data;
+        Tower tower = node.tower.GetComponent<Tower>();
 
-        // ✅ Check tiền
-        if (!GameManager.Instance.SpendMoney(data.buildCost))
+        if (tower != null)
+            tower.ShowRange(show);
+    }
+
+    public void BuildNormalTower()
+    {
+        BuildTower(normalTowerPrefab);
+    }
+
+    public void BuildFireTower()
+    {
+        BuildTower(fireTowerPrefab);
+    }
+
+    public void BuildIceTower()
+    {
+        BuildTower(iceTowerPrefab);
+    }
+
+    public void BuildLightningTower()
+    {
+        BuildTower(lightningTowerPrefab);
+    }
+
+    private void BuildTower(GameObject towerPrefab)
+    {
+        if (selectedNode == null || !selectedNode.IsEmpty())
+            return;
+
+        if (towerPrefab == null)
         {
-            Debug.Log("Không đủ vàng!");
+            Debug.LogWarning("Prefab tháp này chưa được thiết lập.");
             return;
         }
 
-        GameObject tower = Instantiate(towerPrefab,
-            selectedNode.GetBuildPosition(), Quaternion.identity);
-        selectedNode.tower = tower;
+        Tower prefabTower = towerPrefab.GetComponent<Tower>();
 
+        if (prefabTower == null || prefabTower.data == null)
+        {
+            Debug.LogError(
+                $"Prefab {towerPrefab.name} chưa có Tower hoặc TowerData."
+            );
+            return;
+        }
+
+        if (!GameManager.Instance.SpendMoney(
+                prefabTower.data.buildCost))
+        {
+            Debug.Log("Không đủ vàng để xây tháp!");
+            return;
+        }
+
+        GameObject newTower = Instantiate(
+            towerPrefab,
+            selectedNode.GetBuildPosition(),
+            Quaternion.identity
+        );
+
+        selectedNode.tower = newTower;
         DeselectNode();
     }
 
     public void UpgradeTower()
     {
-        if (selectedNode == null || selectedNode.IsEmpty()) return;
+        if (selectedNode == null || selectedNode.IsEmpty())
+            return;
 
         Tower tower = selectedNode.tower.GetComponent<Tower>();
-        if (!tower.CanUpgrade()) return;
 
-        // ✅ Check tiền
-        if (!GameManager.Instance.SpendMoney(tower.GetUpgradeCost()))
+        if (tower == null || !tower.CanUpgrade())
+            return;
+
+        if (!GameManager.Instance.SpendMoney(
+                tower.GetUpgradeCost()))
         {
             Debug.Log("Không đủ vàng để nâng cấp!");
             return;
@@ -156,14 +266,20 @@ public class BuildManager : MonoBehaviour
 
     public void SellTower()
     {
-        if (selectedNode == null || selectedNode.IsEmpty()) return;
+        if (selectedNode == null || selectedNode.IsEmpty())
+            return;
 
         Tower tower = selectedNode.tower.GetComponent<Tower>();
-        GameManager.Instance.AddMoney(tower.GetSellValue());   // ✅ hoàn tiền
 
-        Destroy(selectedNode.tower);
+        if (tower == null)
+            return;
+
+        GameManager.Instance.AddMoney(tower.GetSellValue());
+
+        GameObject towerToDestroy = selectedNode.tower;
         selectedNode.tower = null;
 
+        Destroy(towerToDestroy);
         DeselectNode();
     }
 }
