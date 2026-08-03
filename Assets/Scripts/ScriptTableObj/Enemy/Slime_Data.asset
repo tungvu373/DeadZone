@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Slime_Data
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Slime
+  poolTag: Enemy
   speed: 3
-  maxHealth: 100
+  maxHealth: 200
   moneyReward: 10
   damageToBase: 1

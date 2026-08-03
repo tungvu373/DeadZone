@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Tanker
   poolTag: Tanker
   speed: 2
-  maxHealth: 100
+  maxHealth: 350
   moneyReward: 10
   damageToBase: 1
   attackDamage: 5
