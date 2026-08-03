@@ -225,13 +225,11 @@ public class BuildManager : MonoBehaviour
             );
             return;
         }
-
-        if (!GameManager.Instance.SpendMoney(
-                prefabTower.data.buildCost))
-        {
-            Debug.Log("Không đủ vàng để xây tháp!");
-            return;
-        }
+      
+        GameObject tower = Instantiate(towerPrefab,
+            selectedNode.GetBuildPosition(), Quaternion.identity);
+        Debug.Log("click");
+        selectedNode.tower = tower;
 
         GameObject newTower = Instantiate(
             towerPrefab,
