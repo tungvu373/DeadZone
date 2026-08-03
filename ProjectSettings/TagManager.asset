@@ -8,6 +8,7 @@ TagManager:
   - Bullet
   - Tanker
   - FireBullet
+  - Mage
   layers:
   - Default
   - TransparentFX

@@ -128,9 +128,10 @@ public class BuildManager : MonoBehaviour
             Debug.Log("Không đủ vàng!");
             return;
         }
-
+      
         GameObject tower = Instantiate(towerPrefab,
             selectedNode.GetBuildPosition(), Quaternion.identity);
+        Debug.Log("click");
         selectedNode.tower = tower;
 
         DeselectNode();
