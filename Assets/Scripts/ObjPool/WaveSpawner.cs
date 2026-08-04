@@ -1,20 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 
 public class WaveSpawner : MonoBehaviour
 {
-    // ───────────────────── CẤU HÌNH TỪNG WAVE ─────────────────────
-    [System.Serializable]
-    public class WaveSettings
-    {
-        [Min(0)]
-        [Tooltip("Tổng số quái trong wave này.")]
-        public int enemyCount = 5;
-    }
-
-    // ───────────────────────── TRẠNG THÁI ─────────────────────────
+    // ─────────────────────────── TRẠNG THÁI ──────────────────────────
     public enum WaveState
     {
         WaitingToStart,
@@ -23,60 +15,38 @@ public class WaveSpawner : MonoBehaviour
         DelayBetweenWaves
     }
 
-    public WaveState State { get; private set; }
-        = WaveState.WaitingToStart;
+    public WaveState State { get; private set; } = WaveState.WaitingToStart;
 
-    // ─────────────────────────── SETUP ─────────────────────────────
+    // ───────────────────────────── SETUP ─────────────────────────────
     [Header("Setup")]
     public Transform spawnPoint;
 
-    // ─────────────────────── WAVE SETTINGS ─────────────────────────
-    [Header("Wave Settings")]
-    public WaveSettings[] waves =
-    {
-        new WaveSettings { enemyCount = 5 },
-        new WaveSettings { enemyCount = 8 },
-        new WaveSettings { enemyCount = 12 },
-        new WaveSettings { enemyCount = 16 },
-        new WaveSettings { enemyCount = 20 }
-    };
+    // ──────────────────────── WAVE SETTINGS ──────────────────────────
+    [Header("Wave Data")]
+    [Tooltip("Kéo các WaveData asset vào đây theo thứ tự.")]
+    public WaveData[] waves;
 
     [Header("Time Settings")]
-    [Min(0f)]
-    [Tooltip("Thời gian chuẩn bị trước wave đầu tiên.")]
-    public float delayBeforeFirst = 15f;
+    [Min(0f)] public float delayBeforeFirst   = 15f;
+    [Min(0f)] public float delayBetweenWaves  = 20f;
 
-    [Min(0f)]
-    [Tooltip("Thời gian chuẩn bị giữa các wave.")]
-    public float delayBetweenWaves = 20f;
-
-    [Min(0f)]
-    [Tooltip("Khoảng cách thời gian giữa mỗi lần spawn quái.")]
-    public float spawnRate = 0.5f;
-
-    // ───────────────────────────── UI ──────────────────────────────
+    // ─────────────────────────────── UI ──────────────────────────────
     [Header("Countdown UI")]
     public TextMeshProUGUI countdownText;
-
-    [Tooltip("Nút dùng để bỏ qua đếm ngược và bắt đầu wave ngay.")]
-    public Button readyButton;
-
-    [Tooltip("Text nằm bên trong nút Ready.")]
+    public Button          readyButton;
     public TextMeshProUGUI readyButtonText;
 
-    // ─────────────────────────── NỘI BỘ ────────────────────────────
-    private int waveIndex;
+    // ──────────────────────────── NỘI BỘ ────────────────────────────
+    private int   waveIndex;       // index wave hiện tại (0-based → dùng waves[waveIndex])
     private float timer;
-    private bool isSpawning;
+    private bool  spawnFinished;
     private Coroutine spawnCoroutine;
 
-    // Số wave tự động lấy từ kích thước mảng waves.
     public int TotalWaves => waves != null ? waves.Length : 0;
 
-    // ──────────────────────────────────────────────────────────────
+    // ─────────────────────────── AWAKE ───────────────────────────────
     private void Awake()
     {
-        // Tự động đăng ký sự kiện cho nút.
         if (readyButton != null)
         {
             readyButton.onClick.RemoveListener(SkipCountdown);
@@ -84,93 +54,66 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
+    // ──────────────────────────── START ──────────────────────────────
     private void Start()
     {
         if (spawnPoint == null)
         {
-            Debug.LogError("WaveSpawner: Chưa gán Spawn Point.");
-            enabled = false;
-            return;
+            Debug.LogError("WaveSpawner: Chưa gán Spawn Point."); enabled = false; return;
         }
-
         if (TotalWaves <= 0)
         {
-            Debug.LogError("WaveSpawner: Chưa thiết lập wave nào.");
-            enabled = false;
-            return;
+            Debug.LogError("WaveSpawner: Chưa có WaveData nào."); enabled = false; return;
         }
 
-        waveIndex = 0;
-        timer = delayBeforeFirst;
-        isSpawning = false;
-
-        State = WaveState.WaitingToStart;
+        waveIndex    = 0;
+        timer        = delayBeforeFirst;
+        spawnFinished = false;
+        State        = WaveState.WaitingToStart;
 
         UpdateWaveUI();
         ShowWaitingUI("Ready: ");
-
-        /*
-         * Không thay đổi Time.timeScale tại đây.
-         * Vì vậy người chơi vẫn có thể xây, nâng cấp, bán tháp
-         * và di chuyển camera trong thời gian đếm ngược.
-         */
     }
 
+    // ─────────────────────────── UPDATE ──────────────────────────────
     private void Update()
     {
-        if (GameManager.Instance == null ||
-            GameManager.Instance.IsGameOver)
+        if (GameManager.Instance == null || GameManager.Instance.IsGameOver)
         {
-            HideWaitingUI();
-            return;
+            HideWaitingUI(); return;
         }
 
         switch (State)
         {
-            case WaveState.WaitingToStart:
-                HandleWaitingBeforeFirstWave();
-                break;
-
-            case WaveState.Spawning:
-                // Coroutine SpawnWave quản lý trạng thái này.
-                break;
-
-            case WaveState.WaitingForClear:
-                HandleWaitingForClear();
-                break;
-
-            case WaveState.DelayBetweenWaves:
-                HandleDelayBetweenWaves();
-                break;
+            case WaveState.WaitingToStart:    HandleWaitingBeforeFirst();  break;
+            case WaveState.Spawning:          /* Coroutine quản lý */      break;
+            case WaveState.WaitingForClear:   HandleWaitingForClear();     break;
+            case WaveState.DelayBetweenWaves: HandleDelayBetweenWaves();   break;
         }
     }
 
-    // ───────────────── CHỜ TRƯỚC WAVE ĐẦU TIÊN ───────────────────
-    private void HandleWaitingBeforeFirstWave()
+    // ──────────────── CHỜ TRƯỚC WAVE ĐẦU TIÊN ───────────────────────
+    private void HandleWaitingBeforeFirst()
     {
         timer -= Time.deltaTime;
-
-        UpdateWaitingUI(
-            "Ready: ",
-            "Bắt đầu Wave 1"
-        );
-
-        if (timer <= 0f)
-        {
-            StartNextWave();
-        }
+        UpdateWaitingUI("Ready: ", "Bắt đầu Wave 1");
+        if (timer <= 0f) StartNextWave();
     }
 
-    // ───────────────── CHỜ QUÁI BỊ TIÊU DIỆT HẾT ─────────────────
+    // ────────────── CHỜ QUÁI BỊ TIÊU DIỆT HẾT ──────────────────────
     private void HandleWaitingForClear()
     {
-        if (isSpawning)
-            return;
+        // Điều kiện: spawn xong VÀ không còn quái nào sống
+        // Minion boss cũng nằm trong ActiveEnemies → tự đếm đúng
+        if (!spawnFinished) return;
+        if (EnemyMovement.ActiveEnemies.Count > 0) return;
 
-        if (EnemyMovement.ActiveEnemies.Count > 0)
-            return;
+        // Cộng bonus money cuối wave
+        WaveData finishedWave = waves[waveIndex - 1];
+        if (finishedWave.bonusMoneyOnClear > 0)
+            GameManager.Instance.AddMoney(finishedWave.bonusMoneyOnClear);
 
-        // Hoàn thành wave cuối cùng.
+        // Kiểm tra đã hết tất cả wave chưa
         if (waveIndex >= TotalWaves)
         {
             HideWaitingUI();
@@ -178,151 +121,155 @@ public class WaveSpawner : MonoBehaviour
             return;
         }
 
-        // Bắt đầu đếm ngược cho wave tiếp theo.
+        // Bắt đầu đếm ngược cho wave tiếp theo
         timer = delayBetweenWaves;
         State = WaveState.DelayBetweenWaves;
-
         ShowWaitingUI("Next Wave: ");
     }
 
-    // ─────────────────── CHỜ GIỮA CÁC WAVE ───────────────────────
+    // ──────────────── CHỜ GIỮA CÁC WAVE ────────────────────────────
     private void HandleDelayBetweenWaves()
     {
         timer -= Time.deltaTime;
-
         int nextWave = waveIndex + 1;
-
-        UpdateWaitingUI(
-            "Next Wave: ",
-            $"Bắt đầu Wave {nextWave}"
-        );
-
-        if (timer <= 0f)
-        {
-            StartNextWave();
-        }
+        UpdateWaitingUI("Next Wave: ", $"Bắt đầu Wave {nextWave}");
+        if (timer <= 0f) StartNextWave();
     }
 
-    // ─────────────────── NÚT BỎ QUA ĐẾM NGƯỢC ────────────────────
+    // ──────────────── NÚT BỎ QUA ĐẾM NGƯỢC ─────────────────────────
     public void SkipCountdown()
     {
-        if (GameManager.Instance == null ||
-            GameManager.Instance.IsGameOver)
-        {
-            return;
-        }
+        if (GameManager.Instance == null || GameManager.Instance.IsGameOver) return;
 
-        // Chỉ được bỏ qua khi đang ở một trong hai trạng thái chờ.
-        bool canSkip =
-            State == WaveState.WaitingToStart ||
-            State == WaveState.DelayBetweenWaves;
-
-        if (!canSkip)
-            return;
+        bool canSkip = State == WaveState.WaitingToStart
+                    || State == WaveState.DelayBetweenWaves;
+        if (!canSkip) return;
 
         timer = 0f;
         StartNextWave();
     }
 
-    // ───────────────────── BẮT ĐẦU WAVE ───────────────────────────
+    // ──────────────────── BẮT ĐẦU WAVE ─────────────────────────────
     private void StartNextWave()
     {
-        // Chống việc nhấn nút nhiều lần.
-        if (State == WaveState.Spawning ||
-            State == WaveState.WaitingForClear)
-        {
-            return;
-        }
-
+        if (State == WaveState.Spawning || State == WaveState.WaitingForClear) return;
         if (waveIndex >= TotalWaves)
         {
-            HideWaitingUI();
-            GameManager.Instance.Win();
-            return;
+            HideWaitingUI(); GameManager.Instance.Win(); return;
         }
 
         HideWaitingUI();
 
+        WaveData currentWave = waves[waveIndex];
         waveIndex++;
+
+        GameManager.Instance.SetWaveText($"Wave: {waveIndex}/{TotalWaves}");
         State = WaveState.Spawning;
+        spawnFinished = false;
 
-        GameManager.Instance.SetWaveText(
-            $"Wave: {waveIndex}/{TotalWaves}"
-        );
-
-        if (spawnCoroutine != null)
-        {
-            StopCoroutine(spawnCoroutine);
-        }
-
-        spawnCoroutine = StartCoroutine(SpawnWave());
+        if (spawnCoroutine != null) StopCoroutine(spawnCoroutine);
+        spawnCoroutine = StartCoroutine(SpawnWave(currentWave));
     }
 
-    // ─────────────────────── SPAWN QUÁI ───────────────────────────
-    private IEnumerator SpawnWave()
+    // ──────────────────── SPAWN QUÁI ────────────────────────────────
+    private IEnumerator SpawnWave(WaveData wave)
     {
-        isSpawning = true;
+        if (wave.mode == SpawnMode.Sequential)
+            yield return StartCoroutine(SpawnSequential(wave));
+        else
+            yield return StartCoroutine(SpawnInterleaved(wave));
 
-        // waveIndex bắt đầu từ 1 nhưng mảng bắt đầu từ 0.
-        WaveSettings currentWave = waves[waveIndex - 1];
-        int enemyCount = Mathf.Max(0, currentWave.enemyCount);
-
-        for (int i = 0; i < enemyCount; i++)
-        {
-            if (GameManager.Instance.IsGameOver)
-            {
-                isSpawning = false;
-                spawnCoroutine = null;
-                yield break;
-            }
-
-            // Từ wave 2 trở đi, cứ con thứ 4 là Tanker.
-            bool isTanker =
-                waveIndex >= 2 &&
-                (i + 1) % 4 == 0;
-
-            string poolTag = isTanker ? "Tanker" : "Enemy";
-
-            ObjectPool.Instance.SpawnFromPool(
-                poolTag,
-                spawnPoint.position,
-                Quaternion.identity
-            );
-
-            // Không cần chờ sau khi spawn con cuối cùng.
-            if (i < enemyCount - 1 && spawnRate > 0f)
-            {
-                yield return new WaitForSeconds(spawnRate);
-            }
-        }
-
-        isSpawning = false;
+        spawnFinished = true;
         spawnCoroutine = null;
         State = WaveState.WaitingForClear;
     }
 
-    // ────────────────────────── UI ─────────────────────────────────
+    // Spawn hết entry 1 → entry 2 → ...
+    private IEnumerator SpawnSequential(WaveData wave)
+    {
+        foreach (var entry in wave.entries)
+        {
+            if (!IsValidEntry(entry)) continue;
+
+            if (entry.delayBefore > 0f)
+                yield return new WaitForSeconds(entry.delayBefore);
+
+            for (int i = 0; i < entry.count; i++)
+            {
+                if (GameManager.Instance.IsGameOver) yield break;
+
+                SpawnEnemy(entry.enemyData.poolTag);
+
+                if (i < entry.count - 1 && entry.spawnInterval > 0f)
+                    yield return new WaitForSeconds(entry.spawnInterval);
+            }
+        }
+    }
+
+    // Xen kẽ: 1 quái entry[0], 1 quái entry[1], ...
+    private IEnumerator SpawnInterleaved(WaveData wave)
+    {
+        // Tính số lượng từng entry
+        List<int> remaining = new List<int>();
+        foreach (var entry in wave.entries)
+            remaining.Add(IsValidEntry(entry) ? entry.count : 0);
+
+        float interval = 0.8f;
+        if (wave.entries.Count > 0) interval = wave.entries[0].spawnInterval;
+
+        bool anyLeft = true;
+        while (anyLeft)
+        {
+            anyLeft = false;
+            for (int e = 0; e < wave.entries.Count; e++)
+            {
+                if (remaining[e] <= 0) continue;
+                anyLeft = true;
+
+                if (GameManager.Instance.IsGameOver) yield break;
+
+                SpawnEnemy(wave.entries[e].enemyData.poolTag);
+                remaining[e]--;
+
+                if (interval > 0f)
+                    yield return new WaitForSeconds(interval);
+            }
+        }
+    }
+
+    // Spawn 1 quái từ pool theo tag
+    private void SpawnEnemy(string poolTag)
+    {
+        ObjectPool.Instance.SpawnFromPool(poolTag, spawnPoint.position, Quaternion.identity);
+    }
+
+    private bool IsValidEntry(EnemySpawnEntry entry)
+    {
+        if (entry == null || entry.enemyData == null)
+        {
+            Debug.LogWarning("WaveSpawner: EnemySpawnEntry thiếu EnemyData — bỏ qua.");
+            return false;
+        }
+        return entry.count > 0;
+    }
+
+    // ───────────────────────────── UI ────────────────────────────────
     private void ShowWaitingUI(string prefix)
     {
         if (countdownText != null)
         {
             countdownText.gameObject.SetActive(true);
-            countdownText.text =
-                $"{prefix}{Mathf.Max(0, Mathf.CeilToInt(timer))}s";
+            countdownText.text = $"{prefix}{Mathf.Max(0, Mathf.CeilToInt(timer))}s";
         }
-
         if (readyButton != null)
         {
             readyButton.gameObject.SetActive(true);
             readyButton.interactable = true;
         }
-
         UpdateReadyButtonText();
     }
 
-    private void UpdateWaitingUI(
-        string prefix,
-        string buttonContent)
+    private void UpdateWaitingUI(string prefix, string buttonContent)
     {
         int seconds = Mathf.Max(0, Mathf.CeilToInt(timer));
 
@@ -331,65 +278,37 @@ public class WaveSpawner : MonoBehaviour
             countdownText.gameObject.SetActive(true);
             countdownText.text = $"{prefix}{seconds}s";
         }
-
         if (readyButton != null)
         {
             readyButton.gameObject.SetActive(true);
             readyButton.interactable = true;
         }
-
         if (readyButtonText != null)
-        {
-            readyButtonText.text =
-                $"{buttonContent} ngay ({seconds}s)";
-        }
+            readyButtonText.text = $"{buttonContent} ngay ({seconds}s)";
     }
 
     private void UpdateReadyButtonText()
     {
-        if (readyButtonText == null)
-            return;
-
-        int nextWave = Mathf.Clamp(
-            waveIndex + 1,
-            1,
-            TotalWaves
-        );
-
-        int seconds = Mathf.Max(0, Mathf.CeilToInt(timer));
-
-        readyButtonText.text =
-            $"Bắt đầu Wave {nextWave} ngay ({seconds}s)";
+        if (readyButtonText == null) return;
+        int nextWave = Mathf.Clamp(waveIndex + 1, 1, TotalWaves);
+        int seconds  = Mathf.Max(0, Mathf.CeilToInt(timer));
+        readyButtonText.text = $"Bắt đầu Wave {nextWave} ngay ({seconds}s)";
     }
 
     private void HideWaitingUI()
     {
-        if (countdownText != null)
-        {
-            countdownText.gameObject.SetActive(false);
-        }
-
-        if (readyButton != null)
-        {
-            readyButton.gameObject.SetActive(false);
-        }
+        if (countdownText != null) countdownText.gameObject.SetActive(false);
+        if (readyButton   != null) readyButton.gameObject.SetActive(false);
     }
 
     private void UpdateWaveUI()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.SetWaveText(
-                $"Wave: 0/{TotalWaves}"
-            );
-        }
+        GameManager.Instance?.SetWaveText($"Wave: 0/{TotalWaves}");
     }
 
     private void OnDestroy()
     {
         if (readyButton != null)
-        {
             readyButton.onClick.RemoveListener(SkipCountdown);
-        }
     }
 }

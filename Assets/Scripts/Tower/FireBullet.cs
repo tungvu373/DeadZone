@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FireBullet : MonoBehaviour
+public class FireBullet : MonoBehaviour, IPoolable
 {
     [Header("Stats")]
     public float speed = 12f;
@@ -10,23 +10,42 @@ public class FireBullet : MonoBehaviour
     public float splashRadius = 1.5f;
 
     private EnemyMovement target;
+    private int targetGen;          // generation stamp
     private float damage;
     private bool isReturned;
 
-    void OnEnable()
+    // Fire Tower bắn ~1 lần/giây — OverlapCircleAll đơn giản và đáng tin cậy hơn
+    // ContactFilter2D có thể bỏ sót Trigger collider nếu không config đúng
+
+    // ─────────────────── IPOOL ABLE ──────────────────────────────────
+
+    public void OnSpawnFromPool()
     {
         isReturned = false;
+        target = null;
     }
+
+    public void OnReturnToPool()
+    {
+        target = null;
+    }
+
+    // ─────────────────────────── API ─────────────────────────────────
 
     public void Seek(EnemyMovement newTarget, float dmg)
     {
-        target = newTarget;
-        damage = dmg;
+        target    = newTarget;
+        targetGen = newTarget.SpawnGeneration;
+        damage    = dmg;
     }
+
+    // ─────────────────────────── UPDATE ──────────────────────────────
 
     void Update()
     {
-        if (target == null || !target.gameObject.activeInHierarchy)
+        if (target == null
+            || !target.gameObject.activeSelf
+            || target.SpawnGeneration != targetGen)
         {
             ReturnSelf();
             return;
@@ -47,19 +66,22 @@ public class FireBullet : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
+    // ─────────────────────────── PRIVATE ─────────────────────────────
+
     void HitTarget()
     {
-        Collider2D[] hits =
-            Physics2D.OverlapCircleAll(transform.position, splashRadius);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, splashRadius);
 
-        foreach (Collider2D hit in hits)
+        for (int i = 0; i < hits.Length; i++)
         {
-            EnemyMovement enemy = hit.GetComponent<EnemyMovement>();
+            EnemyMovement enemy = hits[i].GetComponent<EnemyMovement>();
+            if (enemy == null) continue;
 
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-            }
+            // FlyingEnemy miễn nhiễm hoàn toàn với Fire splash (đã chốt trong Interaction Matrix)
+            // Bước 5 sẽ tạo class FlyingEnemy — filter sẽ tự hoạt động khi đó
+            // if (enemy is FlyingEnemy) continue;  ← uncomment sau Bước 5
+
+            enemy.TakeDamage(damage);
         }
 
         ReturnSelf();
@@ -68,10 +90,8 @@ public class FireBullet : MonoBehaviour
     void ReturnSelf()
     {
         if (isReturned) return;
-
         isReturned = true;
         target = null;
-
         ObjectPool.Instance.ReturnToPool("FireBullet", gameObject);
     }
 

@@ -8,9 +8,9 @@ public class ObjectPool : MonoBehaviour
     [System.Serializable]
     public class Pool
     {
-        public string tag;          // ví dụ: "Enemy", "Bullet"
+        public string tag;
         public GameObject prefab;
-        public int size;            // số lượng tạo sẵn
+        public int size;
     }
 
     public List<Pool> pools;
@@ -40,7 +40,7 @@ public class ObjectPool : MonoBehaviour
     {
         if (!poolDictionary.ContainsKey(tag))
         {
-            Debug.LogWarning("Pool tag không tồn tại: " + tag);
+            Debug.LogWarning("[Pool] Tag không tồn tại: " + tag);
             return null;
         }
 
@@ -53,21 +53,37 @@ public class ObjectPool : MonoBehaviour
         }
         else
         {
-            // Pool cạn → tự tạo thêm
+            // Pool cạn → auto-expand, log cảnh báo để tăng prewarm size
             Pool poolConfig = pools.Find(p => p.tag == tag);
             obj = Instantiate(poolConfig.prefab, transform);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning($"[Pool] '{tag}' pool cạn — auto-expand. Tăng prewarm size lên!");
+#endif
         }
 
         obj.transform.position = position;
         obj.transform.rotation = rotation;
-        obj.SetActive(true);   // OnEnable() của object sẽ chạy → dùng để reset state
+
+        // Reset state TRƯỚC khi kích hoạt (OnSpawnFromPool chạy trước OnEnable)
+        obj.GetComponent<IPoolable>()?.OnSpawnFromPool();
+        obj.SetActive(true);
 
         return obj;
     }
 
     public void ReturnToPool(string tag, GameObject obj)
     {
+        // Dọn state TRƯỚC khi tắt (OnReturnToPool chạy trước OnDisable)
+        obj.GetComponent<IPoolable>()?.OnReturnToPool();
         obj.SetActive(false);
-        poolDictionary[tag].Enqueue(obj);
+
+        if (poolDictionary.ContainsKey(tag))
+            poolDictionary[tag].Enqueue(obj);
     }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary>Trả về số object đang chờ trong pool — dùng cho DebugPanel.</summary>
+    public int GetIdleCount(string tag)
+        => poolDictionary != null && poolDictionary.TryGetValue(tag, out var q) ? q.Count : 0;
+#endif
 }

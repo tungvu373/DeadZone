@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5303421117144502507}
   - component: {fileID: 4776224907254891457}
   - component: {fileID: 6996927962113930089}
+  - component: {fileID: 3655074724520657396}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -144,7 +145,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   data: {fileID: 11400000, guid: 38abeb58d0ff4fa4ba027d5bbf3b2278, type: 2}
+  slowResistance: 0
   healthBar: {fileID: 5533063356590370404}
+  statusHandler: {fileID: 3655074724520657396}
 --- !u!95 &6996927962113930089
 Animator:
   serializedVersion: 7
@@ -167,6 +170,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3655074724520657396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334209698094377213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfd4935c29ba6043ac4c7e438ba729a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectHandler
 --- !u!1001 &8575946075107333038
 PrefabInstance:
   m_ObjectHideFlags: 0

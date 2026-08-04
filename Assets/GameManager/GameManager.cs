@@ -17,6 +17,11 @@ public class GameManager : MonoBehaviour
     public GameObject winPanel;
     public GameObject losePanel;
 
+    [Header("Map")]
+    // Gán qua Inspector — mỗi scene ứng với 1 MapData asset (1:1)
+    // MapData sẽ được tạo ở Bước 7; để null nếu chưa có
+    public ScriptableObject currentMapData;
+
     public int Money { get; private set; }
     public int Lives { get; private set; }
     public bool IsGameOver { get; private set; }
@@ -27,13 +32,13 @@ public class GameManager : MonoBehaviour
         Money = startMoney;
         Lives = startLives;
         IsGameOver = false;
-        Time.timeScale = 1f;
+        // timeScale KHÔNG ghi ở đây — GameSpeedController.Awake() lo
     }
 
     void Start()
     {
         UpdateUI();
-        if (winPanel != null) winPanel.SetActive(false);
+        if (winPanel  != null) winPanel.SetActive(false);
         if (losePanel != null) losePanel.SetActive(false);
         StartCoroutine(PassiveCoinRoutine());
     }
@@ -45,8 +50,7 @@ public class GameManager : MonoBehaviour
         while (!IsGameOver)
         {
             yield return new WaitForSeconds(1.25f);
-            if (!IsGameOver)
-                AddMoney(1);
+            if (!IsGameOver) AddMoney(1);
         }
     }
 
@@ -73,15 +77,9 @@ public class GameManager : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (IsGameOver) return;
-
         Lives -= amount;
         UpdateUI();
-
-        if (Lives <= 0)
-        {
-            Lives = 0;
-            Lose();
-        }
+        if (Lives <= 0) { Lives = 0; Lose(); }
     }
 
     // ================== THẮNG / THUA ==================
@@ -90,15 +88,28 @@ public class GameManager : MonoBehaviour
     {
         if (IsGameOver) return;
         IsGameOver = true;
+
+        // Lưu tiến độ map (Bước 7: SaveManager sẽ xử lý currentMapData)
+        // SaveManager.SetMapCompleted(((MapData)currentMapData).mapId);
+
         if (winPanel != null) winPanel.SetActive(true);
-        Time.timeScale = 0f;
+
+        // Gọi qua GameSpeedController — KHÔNG ghi Time.timeScale trực tiếp
+        if (GameSpeedController.Instance != null)
+            GameSpeedController.Instance.StopGame();
+        else
+            Time.timeScale = 0f; // fallback an toàn nếu chưa có controller
     }
 
     void Lose()
     {
         IsGameOver = true;
         if (losePanel != null) losePanel.SetActive(true);
-        Time.timeScale = 0f;
+
+        if (GameSpeedController.Instance != null)
+            GameSpeedController.Instance.StopGame();
+        else
+            Time.timeScale = 0f;
     }
 
     // ================== UI ==================
