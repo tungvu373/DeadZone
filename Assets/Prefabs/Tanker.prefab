@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 7637834595821201394}
   - component: {fileID: -5346269467370483896}
   - component: {fileID: 3232981425272222538}
+  - component: {fileID: 7655489258010907444}
   m_Layer: 0
   m_Name: Tanker
   m_TagString: Tanker
@@ -168,7 +169,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::tanker
   data: {fileID: 11400000, guid: 3c7afc6f7dd72984691517171401491f, type: 2}
+  slowResistance: 0
   healthBar: {fileID: 2738324802166220448}
+  statusHandler: {fileID: 0}
   shieldVisual: {fileID: 6685800657162037005}
   animator: {fileID: 7637834595821201394}
   shieldDuration: 2
@@ -209,6 +212,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.91
+--- !u!114 &7655489258010907444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4213658722696283993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfd4935c29ba6043ac4c7e438ba729a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectHandler
 --- !u!1 &4455848123457018887
 GameObject:
   m_ObjectHideFlags: 0

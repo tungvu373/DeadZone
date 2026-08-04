@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6735241362021832194}
   - component: {fileID: 5528396460108424206}
   - component: {fileID: 3476358181251425563}
+  - component: {fileID: 8179154829729002050}
   m_Layer: 0
   m_Name: Enemy_Mage
   m_TagString: Mage
@@ -166,9 +167,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MageEnemy
   data: {fileID: 11400000, guid: 9cfd7aed4c427d14f8741d54b197ccb7, type: 2}
+  slowResistance: 0
   healthBar: {fileID: 4425477141919272850}
+  statusHandler: {fileID: 8179154829729002050}
   mageData: {fileID: 11400000, guid: 9cfd7aed4c427d14f8741d54b197ccb7, type: 2}
   animator: {fileID: 6735241362021832194}
+--- !u!114 &8179154829729002050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3887853600595225523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfd4935c29ba6043ac4c7e438ba729a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectHandler
 --- !u!1001 &477652355091051096
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,31 +1,47 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IPoolable
 {
     [Header("Stats")]
     public float speed = 12f;
-    public float hitDistance = 0.15f;   // khoảng cách tính là trúng
+    public float hitDistance = 0.15f;
 
     private EnemyMovement target;
+    private int targetGen;          // generation stamp — phát hiện "quái tái chế"
     private float damage;
     private bool isReturned;
 
-    void OnEnable()
+    // ─────────────────── IPOOL ABLE ──────────────────────────────────
+
+    public void OnSpawnFromPool()
     {
         isReturned = false;
+        target = null;
     }
 
-    // Tower gọi hàm này ngay sau khi spawn
+    public void OnReturnToPool()
+    {
+        target = null;
+    }
+
+    // ─────────────────────────── API ─────────────────────────────────
+
+    /// <summary>Tower gọi ngay sau khi spawn từ pool.</summary>
     public void Seek(EnemyMovement newTarget, float dmg)
     {
-        target = newTarget;
-        damage = dmg;
+        target    = newTarget;
+        targetGen = newTarget.SpawnGeneration; // ghi nhớ thế hệ hiện tại
+        damage    = dmg;
     }
+
+    // ─────────────────────────── UPDATE ──────────────────────────────
 
     void Update()
     {
-        // Mục tiêu đã chết / về pool giữa chừng → đạn tự hủy
-        if (target == null || !target.gameObject.activeInHierarchy)
+        // Quái đã chết HOẶC đã được tái chế từ pool (SpawnGeneration tăng)
+        if (target == null
+            || !target.gameObject.activeSelf
+            || target.SpawnGeneration != targetGen)
         {
             ReturnSelf();
             return;
@@ -34,20 +50,19 @@ public class Bullet : MonoBehaviour
         Vector3 dir = target.transform.position - transform.position;
         float distThisFrame = speed * Time.deltaTime;
 
-        // Trúng mục tiêu
         if (dir.magnitude <= distThisFrame + hitDistance)
         {
             HitTarget();
             return;
         }
 
-        // Bay đuổi theo mục tiêu
         transform.Translate(dir.normalized * distThisFrame, Space.World);
 
-        // Xoay đầu đạn theo hướng bay
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
+
+    // ─────────────────────────── PRIVATE ─────────────────────────────
 
     void HitTarget()
     {
