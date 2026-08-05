@@ -1,7 +1,6 @@
 gitattributes
 # Mặc định: tự động chuẩn hóa text file về LF trong repo
 * text=auto
-
 # Các file Unity dạng text (YAML) → luôn dùng LF
 *.cs text eol=lf
 *.meta text eol=lf
@@ -31,6 +30,8 @@ gitattributes
 *.mp3 binary
 *.ogg binary
 *.dll binary
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_14_0.so filter=lfs diff=lfs merge=lfs -text
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_14_0.bundle filter=lfs diff=lfs merge=lfs -text
 *.gitignore filter=lfs diff=lfs merge=lfs -text
 *.vsconfig filter=lfs diff=lfs merge=lfs -text
 *.meta filter=lfs diff=lfs merge=lfs -text
