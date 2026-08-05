@@ -1,17 +1,3 @@
-using UnityEngine;
-
-[CreateAssetMenu(fileName = "EnemyData", menuName = "TD/Enemy Data")]
-public class EnemyData : ScriptableObject
-{
-    [Header("Info")]
-    public string enemyName = "Slime";
-    public string poolTag = "Enemy";
-
-    [Header("Stats")]
-    public float speed = 3f;
-    public float maxHealth = 100f;
-
-    [Header("Economy")]
-    public int moneyReward = 10;
-    public int damageToBase = 1;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:41f904881c47484d1aab7f805d16726a67aedae093ec2633f43476af281c99f0
+size 410

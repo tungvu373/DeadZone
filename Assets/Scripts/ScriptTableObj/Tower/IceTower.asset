@@ -1,36 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5d2272a8f8b6a74c9da08551c05e429, type: 3}
-  m_Name: IceTower
-  m_EditorClassIdentifier: Assembly-CSharp::TowerData
-  towerName: IceTower
-  buildCost: 125
-  sellRefundPercent: 0.7
-  levels:
-  - damage: 15
-    range: 3
-    maxHealth: 80
-    fireRate: 1
-    upgradeCost: 125
-    levelSprite: {fileID: 2579299117502204163, guid: f3c1ad2979cf6c84da299a794c44ac69, type: 3}
-  - damage: 20
-    range: 3.5
-    maxHealth: 100
-    fireRate: 2
-    upgradeCost: 150
-    levelSprite: {fileID: -152354275897129364, guid: b58b83d9b723db441bbe25580bf2e0cf, type: 3}
-  - damage: 40
-    range: 4
-    maxHealth: 120
-    fireRate: 2
-    upgradeCost: 0
-    levelSprite: {fileID: 5559667929427957976, guid: 477390aee645dae4aa473fb982f3f132, type: 3}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3abba7f609259f5fa1c21310a3982fcc2146d32e828e06253530995d7d9c07d4
+size 1036

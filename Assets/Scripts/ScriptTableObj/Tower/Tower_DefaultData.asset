@@ -1,36 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5d2272a8f8b6a74c9da08551c05e429, type: 3}
-  m_Name: Tower_DefaultData
-  m_EditorClassIdentifier: Assembly-CSharp::TowerData
-  towerName: Tower Default
-  buildCost: 100
-  sellRefundPercent: 0.7
-  levels:
-  - damage: 50
-    range: 3.5
-    maxHealth: 100
-    fireRate: 1
-    upgradeCost: 0
-    levelSprite: {fileID: -5901685104126582622, guid: 7da84d7bb4e197a49981731b9119c918, type: 3}
-  - damage: 70
-    range: 4
-    maxHealth: 100
-    fireRate: 2
-    upgradeCost: 100
-    levelSprite: {fileID: 1330466856, guid: 7da84d7bb4e197a49981731b9119c918, type: 3}
-  - damage: 100
-    range: 5
-    maxHealth: 100
-    fireRate: 4
-    upgradeCost: 200
-    levelSprite: {fileID: 950745945, guid: 7da84d7bb4e197a49981731b9119c918, type: 3}
+version https://git-lfs.github.com/spec/v1
+oid sha256:587b31a31c5eaca33c8af7fd7b83434cb10da3e021ec28c837456fff317e2a57
+size 1034

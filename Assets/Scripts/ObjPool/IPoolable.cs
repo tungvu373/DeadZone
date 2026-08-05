@@ -1,12 +1,3 @@
-/// <summary>
-/// Contract bắt buộc cho mọi object dùng ObjectPool.
-/// OnSpawnFromPool  → chạy TRƯỚC SetActive(true)  → reset state đặc thù pool.
-/// OnReturnToPool   → chạy TRƯỚC SetActive(false) → hủy coroutine, tắt VFX.
-///
-/// KHÔNG Add/Remove ActiveEnemies ở đây — việc đó do OnEnable/OnDisable đảm nhiệm.
-/// </summary>
-public interface IPoolable
-{
-    void OnSpawnFromPool();
-    void OnReturnToPool();
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:79ab73b33db7ecd14f7e4af7e5cbd92597412fb3e68f3da0b00ad03eff323c7f
+size 462

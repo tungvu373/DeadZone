@@ -1,20 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7cf8adb780e6394cb5e963458e73253, type: 3}
-  m_Name: HeavyEnemy
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  enemyName: HeavyEnemy
-  poolTag: HeavyEnemy
-  speed: 1
-  maxHealth: 500
-  moneyReward: 35
-  damageToBase: 5
+version https://git-lfs.github.com/spec/v1
+oid sha256:dd2961606024b244fed2f6f252f83d004a910cb2a44b14a81fd8c399c2f46634
+size 535
