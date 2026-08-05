@@ -12246,6 +12246,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 346154666}
     - target: {fileID: 1504646018417342037, guid: 5ef2707f5e1fb0f4b82563d497497811, type: 3}
+      propertyPath: iceTowerPrefab
+      value: 
+      objectReference: {fileID: 4332281721538828051, guid: 03eb8797fcaa9c946916b69926f123f2, type: 3}
+    - target: {fileID: 1504646018417342037, guid: 5ef2707f5e1fb0f4b82563d497497811, type: 3}
       propertyPath: fireTowerPrefab
       value: 
       objectReference: {fileID: 1607878326220238542, guid: 6325aaed7a7a0ec4bb23412bbf452b42, type: 3}
@@ -12253,6 +12257,10 @@ PrefabInstance:
       propertyPath: normalTowerPrefab
       value: 
       objectReference: {fileID: 4332281721538828051, guid: b99cae2e199f3f343a215112059f57e2, type: 3}
+    - target: {fileID: 1504646018417342037, guid: 5ef2707f5e1fb0f4b82563d497497811, type: 3}
+      propertyPath: lightningTowerPrefab
+      value: 
+      objectReference: {fileID: 4332281721538828051, guid: aeb3752156fd0ca43ade5f9c2266fc43, type: 3}
     - target: {fileID: 3092168905526698503, guid: 5ef2707f5e1fb0f4b82563d497497811, type: 3}
       propertyPath: m_Name
       value: BuildManager
@@ -12969,7 +12977,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.size
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[1].tag
@@ -12985,7 +12993,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[4].tag
-      value: Mage
+      value: SpeedEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[5].tag
+      value: HeavyEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[6].tag
+      value: IceBullet
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[7].tag
+      value: LightningVFX
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[0].size
@@ -13005,7 +13025,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[4].size
-      value: 30
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[5].size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[6].size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[7].size
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[0].prefab
@@ -13026,7 +13058,19 @@ PrefabInstance:
     - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: pools.Array.data[4].prefab
       value: 
-      objectReference: {fileID: 3887853600595225523, guid: e00e999f8c10c1545afd9805fcbf7c2c, type: 3}
+      objectReference: {fileID: 334209698094377213, guid: 10d78cbafd2f2044dadaabde147ca46d, type: 3}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[5].prefab
+      value: 
+      objectReference: {fileID: 334209698094377213, guid: 18e666f7637ee5942a1e597980ef7937, type: 3}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[6].prefab
+      value: 
+      objectReference: {fileID: 8403946355032327462, guid: 635c83fd8a7ce2e4899e8f86013e6f2d, type: 3}
+    - target: {fileID: 736941027324262259, guid: 8230003322d2759428653980faddf5c5, type: 3}
+      propertyPath: pools.Array.data[7].prefab
+      value: 
+      objectReference: {fileID: 2882969988185939233, guid: 3157a264201439449971951972dad11f, type: 3}
     - target: {fileID: 4858090923644882781, guid: 8230003322d2759428653980faddf5c5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.13719

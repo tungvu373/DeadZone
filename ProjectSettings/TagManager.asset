@@ -9,6 +9,9 @@ TagManager:
   - Tanker
   - FireBullet
   - Mage
+  - HeavySmile
+  - SpeedSlime
+  - IceBullet
   layers:
   - Default
   - TransparentFX

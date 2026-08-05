@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 6996927962113930089}
   - component: {fileID: 3655074724520657396}
   m_Layer: 0
-  m_Name: Enemy
-  m_TagString: Enemy
+  m_Name: Speed_Slime
+  m_TagString: SpeedSlime
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca7fef32f841984a8987192cdf38780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  data: {fileID: 11400000, guid: 38abeb58d0ff4fa4ba027d5bbf3b2278, type: 2}
+  data: {fileID: 11400000, guid: 768beff404ffff0498f7474ddce2bfd4, type: 2}
   slowResistance: 0
   healthBar: {fileID: 5533063356590370404}
   statusHandler: {fileID: 3655074724520657396}

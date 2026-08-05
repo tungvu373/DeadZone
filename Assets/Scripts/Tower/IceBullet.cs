@@ -1,28 +1,24 @@
 using UnityEngine;
 
-public class FireBullet : MonoBehaviour, IPoolable
+public class IceBullet : MonoBehaviour, IPoolable
 {
     [Header("Stats")]
-    public float speed = 12f;
+    public float speed = 10f;
     public float hitDistance = 0.15f;
 
-    [Header("Fire")]
-    public float splashRadius = 1.5f;
-
     private EnemyMovement target;
-    private int targetGen;          // generation stamp
+    private int targetGen;          // generation stamp — phát hiện "quái tái chế"
     private float damage;
+    private float slowPercent;
+    private float slowDuration;
     private bool isReturned;
 
-    // Static buffer — tái sử dụng, tránh alloc mỗi phát bắn
-    private static readonly Collider2D[] SplashBuffer = new Collider2D[32];
-
-    // ─────────────────── IPOOL ABLE ──────────────────────────────────
+    // ─────────────────── IPOOLABLE ───────────────────────────────────
 
     public void OnSpawnFromPool()
     {
         isReturned = false;
-        target = null;
+        target     = null;
     }
 
     public void OnReturnToPool()
@@ -32,17 +28,21 @@ public class FireBullet : MonoBehaviour, IPoolable
 
     // ─────────────────────────── API ─────────────────────────────────
 
-    public void Seek(EnemyMovement newTarget, float dmg)
+    /// <summary>IceTower gọi ngay sau khi spawn từ pool.</summary>
+    public void Init(EnemyMovement newTarget, float dmg, float slowPct, float slowDur)
     {
-        target    = newTarget;
-        targetGen = newTarget.SpawnGeneration;
-        damage    = dmg;
+        target       = newTarget;
+        targetGen    = newTarget.SpawnGeneration;
+        damage       = dmg;
+        slowPercent  = slowPct;
+        slowDuration = slowDur;
     }
 
     // ─────────────────────────── UPDATE ──────────────────────────────
 
     void Update()
     {
+        // Quái đã chết HOẶC tái chế từ pool (SpawnGeneration tăng) → tự hủy
         if (target == null
             || !target.gameObject.activeSelf
             || target.SpawnGeneration != targetGen)
@@ -70,20 +70,15 @@ public class FireBullet : MonoBehaviour, IPoolable
 
     void HitTarget()
     {
-        // OverlapCircleNonAlloc — không alloc, dùng static buffer
-        int count = Physics2D.OverlapCircleNonAlloc(transform.position, splashRadius, SplashBuffer);
+        // Gây damage
+        target.TakeDamage(damage);
 
-        for (int i = 0; i < count; i++)
-        {
-            EnemyMovement enemy = SplashBuffer[i].GetComponent<EnemyMovement>();
-            if (enemy == null) continue;
-
-            // FlyingEnemy miễn nhiễm hoàn toàn với Fire splash (đã chốt trong Interaction Matrix)
-            // Bước 5 sẽ tạo class FlyingEnemy — filter sẽ tự hoạt động khi đó
-            // if (enemy is FlyingEnemy) continue;  ← uncomment sau Bước 5
-
-            enemy.TakeDamage(damage);
-        }
+        // Áp dụng slow qua StatusEffectHandler — tự xử lý resistance và cap
+        StatusEffectHandler handler = target.GetComponent<StatusEffectHandler>();
+        if (handler != null)
+            handler.ApplySlow(slowPercent, slowDuration, target.slowResistance);
+        else
+            Debug.LogWarning($"[IceBullet] {target.name} thiếu StatusEffectHandler!");
 
         ReturnSelf();
     }
@@ -93,12 +88,12 @@ public class FireBullet : MonoBehaviour, IPoolable
         if (isReturned) return;
         isReturned = true;
         target = null;
-        ObjectPool.Instance.ReturnToPool("FireBullet", gameObject);
+        ObjectPool.Instance.ReturnToPool("IceBullet", gameObject);
     }
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, splashRadius);
+        Gizmos.color = new Color(0.5f, 0.83f, 1f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, hitDistance);
     }
 }

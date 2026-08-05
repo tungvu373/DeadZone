@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d2272a8f8b6a74c9da08551c05e429, type: 3}
+  m_Name: LightningTowerData
+  m_EditorClassIdentifier: Assembly-CSharp::TowerData
+  towerName: LightningTower
+  buildCost: 150
+  sellRefundPercent: 0.7
+  levels:
+  - damage: 20
+    range: 3.5
+    maxHealth: 80
+    fireRate: 1
+    upgradeCost: 175
+    levelSprite: {fileID: 456778421, guid: f3c1ad2979cf6c84da299a794c44ac69, type: 3}
+  - damage: 30
+    range: 3.5
+    maxHealth: 100
+    fireRate: 2
+    upgradeCost: 200
+    levelSprite: {fileID: -113663009, guid: b58b83d9b723db441bbe25580bf2e0cf, type: 3}
+  - damage: 50
+    range: 4
+    maxHealth: 150
+    fireRate: 3
+    upgradeCost: 0
+    levelSprite: {fileID: -898987277, guid: 477390aee645dae4aa473fb982f3f132, type: 3}
