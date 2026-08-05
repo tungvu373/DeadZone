@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c204aaaa6b6cf21fead2dc379370a481538f5024c99a1490af515c74d271813d
-size 158
+{
+    "users": [
+        {
+            "username": "quan234",
+            "password": "12345",
+            "coin": 0,
+            "level": 1
+        }
+    ]
+}
