@@ -1,36 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5d2272a8f8b6a74c9da08551c05e429, type: 3}
-  m_Name: Tower_FireData
-  m_EditorClassIdentifier: Assembly-CSharp::TowerData
-  towerName: FireTower
-  buildCost: 120
-  sellRefundPercent: 0.7
-  levels:
-  - damage: 60
-    range: 3.5
-    maxHealth: 120
-    fireRate: 2
-    upgradeCost: 0
-    levelSprite: {fileID: -925897574, guid: f3c1ad2979cf6c84da299a794c44ac69, type: 3}
-  - damage: 70
-    range: 4
-    maxHealth: 140
-    fireRate: 4
-    upgradeCost: 150
-    levelSprite: {fileID: 154141222, guid: b58b83d9b723db441bbe25580bf2e0cf, type: 3}
-  - damage: 100
-    range: 5
-    maxHealth: 160
-    fireRate: 5
-    upgradeCost: 200
-    levelSprite: {fileID: 1966812818, guid: 477390aee645dae4aa473fb982f3f132, type: 3}
+version https://git-lfs.github.com/spec/v1
+oid sha256:01f568391ccb0792694f48782f1afe38f7238b335ca5b91b9e28a3566a0cf564
+size 1017

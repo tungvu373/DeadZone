@@ -1,23 +1,3 @@
-using UnityEngine;
-
-public class FireTower : Tower
-{
-    [Header("Fire Tower")]
-    public float splashRadius = 1.8f;
-    public float burnDamage = 5f;
-    public float burnDuration = 3f;
-
-    protected override void Shoot()
-    {
-        GameObject bullet = ObjectPool.Instance.SpawnFromPool(
-            "FireBullet",
-            firePoint.position,
-            firePoint.rotation);
-
-        if (bullet != null)
-        {
-            bullet.GetComponent<FireBullet>()
-                  .Seek(target, damage);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f850ebf856e044dc7caa31117d64138a308ddd8d3c7c5c5ecb3c69d58f7d7137
+size 528
