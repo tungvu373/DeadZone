@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f2fb5e07d3b12fd44bad3e76c3594e29723e7652b1b14cce8d02e0e4eca33166
-size 124
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Firebase.App.Internal.csproj" />
+</Solution>
