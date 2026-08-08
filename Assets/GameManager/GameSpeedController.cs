@@ -1,31 +1,3 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using TMPro;
-
-public class GameSpeedController : MonoBehaviour
-{
-    [Header("UI")]
-    public TextMeshProUGUI speedButtonText;
-
-    private readonly float[] speeds = { 1f, 2f, 3f };
-    private int speedIndex = 0;
-
-    // Gắn vào nút Speed (OnClick)
-    public void CycleSpeed()
-    {
-        if (GameManager.Instance.IsGameOver) return;   // game kết thúc thì không đổi
-
-        speedIndex = (speedIndex + 1) % speeds.Length;
-        Time.timeScale = speeds[speedIndex];
-
-        if (speedButtonText != null)
-            speedButtonText.text = $"x{speeds[speedIndex]:0}";
-    }
-
-    // Gắn vào nút "Chơi lại" trên Win/Lose Panel
-    public void RestartLevel()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2298392b47f705d95fadf1f87b1295f8186c27bca4cfd6f5fe4f9af70d0346f4
+size 2885

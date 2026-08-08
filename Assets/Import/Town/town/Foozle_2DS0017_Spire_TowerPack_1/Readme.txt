@@ -1,24 +1,3 @@
-
-			------------------------------	
-	
-	Spire - Tower Pack 1 (1.0)
-
-	Commissioned from: Baldur (https://twitter.com/the__baldur)
-	Distributed by Foozle (www.foozle.io)
-
-			------------------------------
-
-	License: (Creative Commons Zero, CC0)
-	http://creativecommons.org/publicdomain/zero/1.0/
-
-	This content is free to use and modify for all projects, including commercial projects.
-	Attribution not required.  If you would like to support, consider a voluntary donation.
-
-			------------------------------
-
-	Donate:   https://foozlecc.itch.io/
-	Patreon:  https://www.patreon.com/bePatron?u=48464594
-
-	Follow on YouTube and Twitter for updates:
-	https://www.youtube.com/c/FoozleCC
-	http://twitter.com/FoozleCC
+version https://git-lfs.github.com/spec/v1
+oid sha256:4949836fd25e1b90fdccf2bc430d4073f299836d91818e4dfa2b38ee981c4146
+size 709
