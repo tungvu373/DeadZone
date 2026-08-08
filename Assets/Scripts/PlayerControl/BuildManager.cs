@@ -228,7 +228,6 @@ public class BuildManager : MonoBehaviour
       
         GameObject tower = Instantiate(towerPrefab,
             selectedNode.GetBuildPosition(), Quaternion.identity);
-        Debug.Log("click");
         selectedNode.tower = tower;
 
         GameObject newTower = Instantiate(

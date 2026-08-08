@@ -379,7 +379,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0199841, y: -0.50499, z: -10}
+  m_LocalPosition: {x: -0.00003766058, y: -0.00997, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11942,17 +11942,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &1097532325 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7669307926798769598, guid: cb9fa3366b714f9469d35ad9df3f831f, type: 3}
-  m_PrefabInstance: {fileID: 3955815358247929146}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35076eeb9b6807b4bb1f3a4c9c3ee732, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BuildManager
 --- !u!1001 &1103786522
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13466,3 +13455,4 @@ SceneRoots:
   - {fileID: 1469857007}
   - {fileID: 1945600833}
   - {fileID: 1681553915}
+  - {fileID: 1550481665}
